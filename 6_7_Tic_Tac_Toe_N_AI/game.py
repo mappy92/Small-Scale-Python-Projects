@@ -1,4 +1,4 @@
-from player import HumanPlayer, RandomComputerPlayer
+from player import HumanPlayer, RandomComputerPlayer, GeniusComputerPlayer
 import time
 
 class TicTacToe:
@@ -31,14 +31,13 @@ class TicTacToe:
     
     def num_empty_squares(self):
         # return len(self.available_moves); 
-        return self.available_moves.count(' ')
+        return self.board.count(' ')
     
     def make_move(self, square, letter):
         if self.board[square] == ' ':
             self.board[square] = letter
             if self.winner(square, letter):
                 self.current_winner = letter
-
             return True
         return False
    
@@ -84,8 +83,7 @@ def play(game, x_player, o_player, print_game=True):
             square = o_player.get_move(game)
         else:
             square = x_player.get_move(game)    
-
-        # if a player makes a move 
+        # if a player makes a move
         if game.make_move(square, letter):
             if print_game:
                 print(letter + f' makes a move to square {square}')
@@ -95,22 +93,34 @@ def play(game, x_player, o_player, print_game=True):
             if game.current_winner:
                 if print_game:
                     print(letter + ' wins!')
-                    return letter
+                return letter
             # after we made move, we need to switch the letter
             letter = 'O' if letter == 'X' else 'X'
-            # tiny break 
-            time.sleep(0.8)
+            # tiny break
+            #if print_game: 
+            time.sleep(0.2)
             # if letter == 'X':
             #     letter ='O'
             # else: 
             #     letter = 'X'
 
     # if we won then ? that should should be right after a player makes a move
-    if print_game & len(game.ava):
+    if print_game: 
             print('It\'s a tie')
 
 if __name__ == '__main__':
-    x_player = HumanPlayer('X')
-    o_player = RandomComputerPlayer('O')
-    t = TicTacToe()
-    play(t, x_player, o_player, print_game=True)
+        x_wins = 0
+        o_wins = 0
+        ties = 0
+        for _ in range(1000):
+            x_player = RandomComputerPlayer('X')
+            o_player = GeniusComputerPlayer('O')
+            t = TicTacToe()
+            result = play(t, x_player, o_player, print_game=False)
+            if result == 'X':
+                x_wins += 1
+            elif result == 'O':
+                o_wins += 1
+            else:
+                ties += 1
+        print(f'After 1000 iterations, we see {x_wins} X wins, {o_wins} O wins, and {ties} Ties.')
